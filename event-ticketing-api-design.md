@@ -105,19 +105,6 @@ Valid transitions: DRAFT → PUBLISHED, DRAFT → CANCELLED, PUBLISHED → CANCE
 | email | String | @NotBlank, @Email | Must be unique |
 | password | String | @NotBlank, @Size(min=8, max=100) | Raw password, hashed before storage |
 
-**UpdateUserRequest**
-
-| Field | Type | Validation | Notes |
-| :---- | :---- | :---- | :---- |
-| name | String | @NotBlank | Updated display name |
-
-**UpdateUserPasswordRequest**
-
-| Field | Type | Validation | Notes |
-| :---- | :---- | :---- | :---- |
-| oldPassword | String | @NotBlank, @Size(min=8, max=100) | Current password for verification |
-| newPassword | String | @NotBlank, @Size(min=8, max=100) | Must differ from oldPassword |
-
 **LoginRequest**
 
 | Field | Type | Validation | Notes |
@@ -222,8 +209,6 @@ Manual mapping in service layer. Fields intentionally excluded from responses: p
 | :---- | :---- | :---- | :---- | :---- |
 | createUser(CreateUserRequest) | UserResponse | DuplicateEmailException | write | Validate uniqueness, hash password, save |
 | getUserById(UUID) | UserResponse | UserNotFoundException | readOnly | Fetch active user by ID |
-| updateUser(UUID userId, UpdateUserRequest, UUID authUserId) | UserResponse | UserNotFoundException, UnauthorizedAccessException | write | Only the user themselves can update their profile |
-| updateUserPassword(UUID userId, UpdateUserPasswordRequest, UUID authUserId) | void | UserNotFoundException, UnauthorizedAccessException, InvalidCredentialsException | write | Verify old password, hash and set new password |
 | deleteUser(UUID userId, UUID authUserId) | void | UserNotFoundException, UnauthorizedAccessException | write | Soft delete — set deletedAt |
 | getUserEntityById(UUID) | User | UserNotFoundException | readOnly | Internal — returns entity for other services |
 
@@ -264,8 +249,6 @@ Manual mapping in service layer. Fields intentionally excluded from responses: p
 | Method | Path | Request Body | Response | Auth |
 | :---- | :---- | :---- | :---- | :---- |
 | GET | /api/v1/users/{id} | — | UserResponse (200) | Protected |
-| PATCH | /api/v1/users/{id} | UpdateUserRequest | UserResponse (200) | Protected (self only) |
-| PATCH | /api/v1/users/{id}/password | UpdateUserPasswordRequest | 204 No Content | Protected (self only) |
 | DELETE | /api/v1/users/{id} | — | 204 No Content | Protected (self only) |
 
 ## **6.3 EventController — /api/v1/events**
