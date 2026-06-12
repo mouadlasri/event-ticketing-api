@@ -1,7 +1,6 @@
 package org.practice.eventticketingapi.event;
 
 import jakarta.validation.Valid;
-import org.hibernate.sql.Update;
 import org.practice.eventticketingapi.event.dto.CreateEventRequest;
 import org.practice.eventticketingapi.event.dto.EventResponse;
 import org.practice.eventticketingapi.event.dto.UpdateEventRequest;

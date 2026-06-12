@@ -35,6 +35,11 @@ public class EventService {
     }
 
     @Transactional(readOnly = true)
+    public Event getPublishedEventEntityById(UUID eventId) {
+        return findEventEntityById(eventId, EventStatus.PUBLISHED);
+    }
+
+    @Transactional(readOnly = true)
     public Page<EventResponse> getAllEvents(Pageable pageable) {
         Page<Event> eventPage = eventRepository.findAllByStatusWithOrganizer(EventStatus.PUBLISHED, pageable);
 
@@ -147,6 +152,11 @@ public class EventService {
 
     private Event findEventById(UUID eventId, EventStatus status) {
         return eventRepository.findByIdAndStatusWithOrganizer(eventId, status)
+                .orElseThrow(() -> new EventNotFoundException(eventId));
+    }
+
+    private Event findEventEntityById(UUID eventId, EventStatus status) {
+        return eventRepository.findByIdAndStatusAndDeletedAtIsNull(eventId, status)
                 .orElseThrow(() -> new EventNotFoundException(eventId));
     }
 

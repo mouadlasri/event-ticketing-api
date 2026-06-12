@@ -49,7 +49,7 @@ public class GlobalExceptionHandler {
     }
 
     @ExceptionHandler(InvalidResourceStateException.class)
-    public ResponseEntity<ErrorResponse> invalidResourceException(InvalidResourceStateException exception) {
+    public ResponseEntity<ErrorResponse> invalidResourceStateException(InvalidResourceStateException exception) {
         ErrorResponse errorResponse = new ErrorResponse(exception.getMessage(), null);
 
         return ResponseEntity.status(HttpStatus.CONFLICT).body(errorResponse);

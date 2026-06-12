@@ -19,4 +19,6 @@ public interface EventRepository extends JpaRepository<Event, UUID> {
     Optional<Event> findByIdAndStatusWithOrganizer(@Param("eventId") UUID eventId, @Param("status") EventStatus status);
     @Query("SELECT e FROM Event e JOIN FETCH e.organizer WHERE e.id = :eventId AND e.deletedAt IS NULL")
     Optional<Event> findByIdWithOrganizer(UUID eventId);
+
+    Optional<Event> findByIdAndStatusAndDeletedAtIsNull(UUID eventId, EventStatus status);
 }
