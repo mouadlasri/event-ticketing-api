@@ -49,7 +49,7 @@ public class BookingService {
     @Transactional
     public BookingResponse create(UUID eventId, UUID userId) {
         // check if event exists (and published)
-        Event event = eventService.getPublishedEventEntityById(eventId);
+        Event event = eventService.getPublishedEventEntityByIdForUpdate(eventId);
 
         // check if user already booked this event or not
         if (bookingRepository.existsConfirmedBookingByUserIdAndEventId(userId, eventId)) {
@@ -80,10 +80,13 @@ public class BookingService {
             throw new InvalidBookingStateException("You can only cancel active bookings");
         }
 
-        booking.getEvent().setAvailableTickets(booking.getEvent().getAvailableTickets() + 1);
+        // explicitly query the event to LOCK the event row for concurrency purposes
+        Event event = eventService.getEventEntityByIdForUpdate(booking.getEvent().getId());
+
+        event.setAvailableTickets(event.getAvailableTickets() + 1);
         booking.cancel();
 
-        return toBookingResponse(booking, booking.getEvent());
+        return toBookingResponse(booking, event);
     }
 
     private BookingResponse toBookingResponse(Booking booking, Event event) {

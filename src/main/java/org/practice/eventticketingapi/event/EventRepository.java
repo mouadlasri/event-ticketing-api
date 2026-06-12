@@ -1,8 +1,10 @@
 package org.practice.eventticketingapi.event;
 
+import jakarta.persistence.LockModeType;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Lock;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
@@ -21,4 +23,12 @@ public interface EventRepository extends JpaRepository<Event, UUID> {
     Optional<Event> findByIdWithOrganizer(UUID eventId);
 
     Optional<Event> findByIdAndStatusAndDeletedAtIsNull(UUID eventId, EventStatus status);
+
+    @Lock(LockModeType.PESSIMISTIC_WRITE)
+    @Query("SELECT e FROM Event e WHERE e.id = :eventId AND e.deletedAt IS NULL")
+    Optional<Event> findByIdAndDeletedAtIsNullForUpdate(@Param("eventId") UUID eventId);
+
+    @Lock(LockModeType.PESSIMISTIC_WRITE)
+    @Query("SELECT e FROM Event e WHERE e.id = :eventId AND e.status = :status AND e.deletedAt IS NULL")
+    Optional<Event> findByIdAndStatusAndDeletedAtIsNullForUpdate(@Param("eventId") UUID eventId, @Param("status") EventStatus status);
 }

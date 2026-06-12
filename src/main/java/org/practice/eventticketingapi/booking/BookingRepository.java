@@ -31,4 +31,7 @@ public interface BookingRepository extends JpaRepository<Booking, UUID> {
     // user-facing method to return the booking details of the user sending the request
     @Query("SELECT b FROM Booking b JOIN FETCH b.event WHERE b.id = :bookingId AND b.user.id = :userId")
     Optional<Booking> findByIdAndUserIdWithEvent(@Param("bookingId") UUID bookingId, @Param("userId") UUID userId);
+
+    // used for testing (can ignore for now)
+    long countByEvent_IdAndStatus(UUID eventId, BookingStatus status);
 }
