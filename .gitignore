@@ -36,3 +36,5 @@ build/
 
 ### Env file for Docker ###
 .env
+.env.*
+!.env.example
